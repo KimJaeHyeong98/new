@@ -9,7 +9,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 public class WebConfig implements WebMvcConfigurer {
 
     // application.properties 의 app.upload.dir 값 주입
-    @Value("${app.upload.dir}")
+   // @Value("${app.upload.dir}")
     private String uploadDir;   // 예: C:/finalDB/postUpload/  또는 ./uploads/
 
     @Override
