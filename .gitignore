@@ -9,9 +9,12 @@ back/target/
 back/.idea/ 
 back/*.iml 
 src/main/resources/application.properties 
-*.log 
+*.log
+
+# Build cache (Gradle)
+.gradle/
  
-# OS / IDE / ±âÅ¸ 
+# OS / IDE / ï¿½ï¿½Å¸ 
 .DS_Store 
 Thumbs.db 
 .vscode/ 
