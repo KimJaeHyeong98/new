@@ -1,7 +1,11 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Home from "./pages/Home";
-import Infokaisha from "./info/infokaisha"; // 추가
+ {/* info import */}
+import Infokaisha from "./info/infokaisha"; 
 import Infokaishasignup from "./info/infokaishasignup";
+import Infokaishalogin from "./info/Infokaishalogin";
+import JhHome from "./info/main/JhHome"
+ {/* info import */}
 import Letter from "./letter/Letter";
 
 function Food() {
@@ -23,8 +27,11 @@ function App() {
         <Route path="/quiz" element={<Quiz />} />
 
         {/* info Route */}
-        <Route path="/login" element={<Infokaisha />} />
+        <Route path="/login" element={<Infokaishalogin />} />
         <Route path="/signup" element={<Infokaishasignup />} />
+        <Route path="/home" element={<JhHome />} />
+        <Route path="/info" element={<div>인사정보 페이지</div>} />
+        <Route path="/vacation" element={<div>휴가신청 페이지</div>} />
         {/* info Route */}
       </Routes>
     </Router>

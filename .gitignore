@@ -1,17 +1,92 @@
-# Frontend 
-front/node_modules/ 
-front/dist/ 
-front/build/ 
-front/.env 
- 
-# Backend 
-back/target/ 
-back/.idea/ 
-back/*.iml 
-src/main/resources/application.properties 
-*.log 
- 
-# OS / IDE / ��Ÿ 
-.DS_Store 
-Thumbs.db 
-.vscode/ 
+# ========================================
+# 🧠 기본 Git 무시 규칙 (OS / 환경 공통)
+# ========================================
+.DS_Store
+Thumbs.db
+.vscode/
+*.log
+*.tmp
+
+# ========================================
+# 🧰 IntelliJ IDEA / JetBrains
+# ========================================
+.idea/
+*.iml
+out/
+*.ipr
+*.iws
+
+# ========================================
+# 🪄 Eclipse / STS
+# ========================================
+.project
+.classpath
+.settings/
+bin/
+
+# ========================================
+# 🪶 Gradle 관련
+# ========================================
+.gradle/
+build/
+!gradle/wrapper/gradle-wrapper.jar
+!**/src/**/build.gradle  # gradle 설정 파일은 예외로 커밋 허용
+
+# ========================================
+# ⚙️ Java / Spring / Backend
+# ========================================
+/target/
+/build/
+/out/
+/bin/
+/*.war
+/*.jar
+/*.class
+
+# application 설정 (보안상 제외)
+src/main/resources/application.properties
+src/main/resources/application.yml
+
+# ========================================
+# ⚛️ React / Frontend (TypeScript)
+# ========================================
+front/node_modules/
+front/dist/
+front/build/
+front/.env
+front/.env.local
+front/.env.development
+front/.env.production
+front/.env.test
+
+# Frontend temporary
+front/npm-debug.log*
+front/yarn-debug.log*
+front/yarn-error.log*
+front/.parcel-cache/
+front/.next/
+front/.turbo/
+front/.eslintcache
+
+# ========================================
+# 🔐 OS 및 기타
+# ========================================
+*.swp
+*.swo
+*.bak
+*.orig
+*.rej
+*.tmp
+*.temp
+*.pid
+*.seed
+*.pid.lock
+
+# ========================================
+# 📦 IDE 관련 (VSCode, JetBrains 등)
+# ========================================
+.vscode/
+.idea/
+*.iml
+*.ipr
+*.iws

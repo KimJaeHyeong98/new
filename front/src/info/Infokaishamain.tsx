@@ -1,7 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 
-const Infokaisha : React.FC = () => {
+const infokaishamain : React.FC = () => {
   const navigate = useNavigate();
 
   return (
@@ -15,7 +15,7 @@ const Infokaisha : React.FC = () => {
   );
 };
 
-export default Infokaisha;
+export default infokaishamain;
 
 /* ===== 스타일 ===== */
 const Container = styled.div`

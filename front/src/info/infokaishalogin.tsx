@@ -1,23 +1,72 @@
-import { useNavigate } from "react-router-dom";
+// src/pages/InfoKaishaLogin.tsx
+import { useState } from "react";
 import styled from "styled-components";
+import { useNavigate } from "react-router-dom";
+import axios from "axios";
 
-const Infokaisha = () => {
+const InfoKaishaLogin: React.FC = () => {
   const navigate = useNavigate();
+
+  // 입력값 상태 관리
+  const [id, setID] = useState<string>("");
+  const [password, setPassword] = useState<string>("");
+
+  // 로그인 처리
+  const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault(); // 폼 기본 제출 방지
+
+    try {
+      const res = await axios.post("http://localhost:8080/api/login", {
+        id,
+        password,
+      });
+
+      if (res.data.success) {
+        localStorage.setItem("token", res.data.token); // 토큰 저장
+        navigate("/home"); // 로그인 성공 시 홈으로 이동
+      } else {
+        alert("아이디 또는 비밀번호가 올바르지 않습니다.");
+      }
+    } catch (err) {
+      console.error(err);
+      alert("로그인 요청 중 오류가 발생했습니다.");
+    }
+  };
 
   return (
     <Container>
-      <h1>환영합니다!</h1>
-      <ButtonGrid>
-        <button onClick={() => navigate("/login")}>로그인</button>
-        <button onClick={() => navigate("/signup")}>회원가입</button>
-      </ButtonGrid>
+      <h1>로그인</h1>
+
+      <Form onSubmit={handleLogin}>
+        <label>아이디</label>
+        <input
+          type="text"
+          value={id}
+          onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+            setID(e.target.value)
+          }
+          placeholder="아이디를 입력하세요"
+        />
+
+        <label>비밀번호</label>
+        <input
+          type="password"
+          value={password}
+          onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+            setPassword(e.target.value)
+          }
+          placeholder="비밀번호를 입력하세요"
+        />
+
+        <Button type="submit">로그인</Button>
+      </Form>
     </Container>
   );
 };
 
-export default Infokaisha;
+export default InfoKaishaLogin;
 
-/* ===== 스타일 ===== */
+/* ===== styled-components ===== */
 const Container = styled.div`
   width: 100vw;
   height: 100vh;
@@ -30,26 +79,40 @@ const Container = styled.div`
 
   h1 {
     font-size: 2.4rem;
-    margin-bottom: 50px;
+    margin-bottom: 30px;
   }
 `;
 
-const ButtonGrid = styled.div`
+const Form = styled.form`
   display: flex;
-  gap: 20px;
+  flex-direction: column;
+  gap: 15px;
+  width: 300px;
 
-  button {
-    padding: 15px 30px;
-    border-radius: 10px;
-    border: none;
-    font-size: 16px;
-    background-color: #4f9cf9;
-    color: white;
-    cursor: pointer;
-    transition: 0.2s;
+  label {
+    font-weight: bold;
   }
 
-  button:hover {
+  input {
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    font-size: 1rem;
+  }
+`;
+
+const Button = styled.button`
+  margin-top: 20px;
+  padding: 12px;
+  border: none;
+  border-radius: 8px;
+  background-color: #4f9cf9;
+  color: white;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: 0.2s;
+
+  &:hover {
     background-color: #357ae8;
   }
 `;
