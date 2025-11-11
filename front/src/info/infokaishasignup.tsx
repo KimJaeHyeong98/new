@@ -1,98 +1,144 @@
 import { useState } from "react";
 import styled from "styled-components";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 
 const InfoKaishaSignup: React.FC = () => {
   const navigate = useNavigate();
 
-  // 입력값 상태 관리 (모두 문자열)
-  const [name, setName] = useState<string>("");
+  // 입력값 상태 관리
+  const [username, setUsername] = useState<string>(""); // 로그인 ID
   const [password, setPassword] = useState<string>("");
-  const [department, setDepartment] = useState<string>("");
-  const [position, setPosition] = useState<string>("");
-  const [hireDate, setHireDate] = useState<string>("");
+  const [confirmPassword, setConfirmPassword] = useState<string>(""); // 비밀번호 확인
 
-  // form 제출 시 호출
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  // 상태 관리
+  const [isChecking, setIsChecking] = useState<boolean>(false); // 중복 확인 중 로딩 표시
+  const [isUsernameAvailable, setIsUsernameAvailable] = useState<boolean | null>(null); // true=사용 가능, false=중복
+
+  // 아이디 중복체크
+  const handleCheckUsername = async () => {
+    if (!username) {
+      alert("아이디를 입력해주세요.");
+      return;
+    }
+
+    setIsChecking(true);
+    try {
+      const res = await axios.get("http://localhost:8080/api/check-username", {
+        params: { username },
+      });
+
+      if (res.data.available) {
+        alert("사용 가능한 아이디입니다!");
+        setIsUsernameAvailable(true);
+      } else {
+        alert("이미 사용 중인 아이디입니다.");
+        setIsUsernameAvailable(false);
+      }
+    } catch (err) {
+      alert("서버 오류가 발생했습니다.");
+      console.error(err);
+    } finally {
+      setIsChecking(false);
+    }
+  };
+
+  // 회원가입 처리
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    console.log({
-      name,
-      password,
-      department,
-      position,
-      hireDate,
-    });
+    if (!isUsernameAvailable) {
+      alert("아이디 중복확인을 먼저 해주세요.");
+      return;
+    }
 
-    alert("회원가입이 완료되었습니다!");
-    navigate("/login");
+    if (password !== confirmPassword) {
+      alert("비밀번호가 일치하지 않습니다.");
+      return;
+    }
+
+    try {
+      const res = await axios.post("http://localhost:8080/api/register", {
+        username,
+        password,
+      });
+
+      if (res.status === 200) {
+        alert("회원가입 성공!");
+        navigate("/login");
+      } else {
+        alert("회원가입 실패: " + res.data.message);
+      }
+    } catch (err: any) {
+      alert("회원가입 중 오류가 발생했습니다.");
+      console.error(err);
+    }
   };
+
+  // 버튼 활성화 조건
+  const isFormValid =
+    username &&
+    password &&
+    confirmPassword &&
+    password === confirmPassword &&
+    isUsernameAvailable === true;
 
   return (
     <Container>
       <h1>회원가입</h1>
 
       <Form onSubmit={handleSubmit}>
-        <label>이름</label>
-        <input
-          type="text"
-          value={name}
-          onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-            setName(e.target.value)
-          }
-          placeholder="이름을 입력하세요"
-        />
+        {/* 아이디 */}
+        <label>아이디</label>
+        <div style={{ display: "flex", gap: "10px" }}>
+          <input
+            type="text"
+            value={username}
+            onChange={(e) => {
+              setUsername(e.target.value);
+              setIsUsernameAvailable(null); // 입력 바꾸면 다시 초기화
+            }}
+            placeholder="아이디를 입력하세요"
+          />
+          <SmallButton
+            type="button"
+            onClick={handleCheckUsername}
+            disabled={isChecking}
+          >
+            {isChecking ? "확인중..." : "중복확인"}
+          </SmallButton>
+        </div>
+        {isUsernameAvailable === true && (
+          <SuccessText>✅ 사용 가능한 아이디입니다.</SuccessText>
+        )}
+        {isUsernameAvailable === false && (
+          <ErrorText>❌ 이미 사용 중인 아이디입니다.</ErrorText>
+        )}
 
+        {/* 비밀번호 */}
         <label>비밀번호</label>
         <input
           type="password"
           value={password}
-          onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-            setPassword(e.target.value)
-          }
+          onChange={(e) => setPassword(e.target.value)}
           placeholder="비밀번호를 입력하세요"
         />
 
-        <label>소속</label>
-        <select
-          value={department}
-          onChange={(e: React.ChangeEvent<HTMLSelectElement>) =>
-            setDepartment(e.target.value)
-          }
-        >
-          <option value="">선택하세요</option>
-          <option value="dev">개발팀</option>
-          <option value="hr">인사팀</option>
-          <option value="sales">영업팀</option>
-          <option value="marketing">마케팅팀</option>
-        </select>
-
-        <label>직급</label>
-        <select
-          value={position}
-          onChange={(e: React.ChangeEvent<HTMLSelectElement>) =>
-            setPosition(e.target.value)
-          }
-        >
-          <option value="">선택하세요</option>
-          <option value="staff">사원</option>
-          <option value="assistant">주임</option>
-          <option value="manager">대리</option>
-          <option value="senior">과장</option>
-          <option value="chief">차장</option>
-          <option value="director">부장</option>
-        </select>
-
-        <label>입사일</label>
+        <label>비밀번호 확인</label>
         <input
-          type="date"
-          value={hireDate}
-          onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-            setHireDate(e.target.value)
-          }
+          type="password"
+          value={confirmPassword}
+          onChange={(e) => setConfirmPassword(e.target.value)}
+          placeholder="비밀번호를 다시 입력하세요"
         />
+        {confirmPassword &&
+          password !== confirmPassword && (
+            <ErrorText>비밀번호가 일치하지 않습니다.</ErrorText>
+          )}
 
-        <Button type="submit">가입하기</Button>
+        <Button type="submit" disabled={!isFormValid}>
+          가입하기
+        </Button>
       </Form>
     </Container>
   );
@@ -127,8 +173,7 @@ const Form = styled.form`
     font-weight: bold;
   }
 
-  input,
-  select {
+  input {
     padding: 10px;
     border: 1px solid #ccc;
     border-radius: 8px;
@@ -136,18 +181,47 @@ const Form = styled.form`
   }
 `;
 
-const Button = styled.button`
+const Button = styled.button<{ disabled?: boolean }>`
   margin-top: 20px;
   padding: 12px;
   border: none;
   border-radius: 8px;
-  background-color: #4f9cf9;
+  background-color: ${(props) => (props.disabled ? "#ccc" : "#4f9cf9")};
   color: white;
   font-size: 1rem;
-  cursor: pointer;
+  cursor: ${(props) => (props.disabled ? "not-allowed" : "pointer")};
   transition: 0.2s;
 
   &:hover {
-    background-color: #357ae8;
+    background-color: ${(props) =>
+      props.disabled ? "#ccc" : "#357ae8"};
   }
+`;
+
+const SmallButton = styled.button`
+  width: 100px;          /* 버튼 가로 고정 */
+  padding: 10px 12px;
+  white-space: nowrap;   /* 줄 바꿈 방지 */
+  background-color: #6c63ff;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.9rem;
+
+  &:hover {
+    background-color: #4f4bc6;
+  }
+`;
+
+const ErrorText = styled.p`
+  color: red;
+  font-size: 0.85rem;
+  margin: 0;
+`;
+
+const SuccessText = styled.p`
+  color: green;
+  font-size: 0.85rem;
+  margin: 0;
 `;

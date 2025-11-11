@@ -1,8 +1,8 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Home from "./pages/Home";
  {/* info import */}
-import Infokaisha from "./info/infokaisha"; 
-import Infokaishasignup from "./info/infokaishasignup";
+import Infokaisha from "./info/Infokaisha"; 
+import Infokaishasignup from "./info/Infokaishasignup";
 import Infokaishalogin from "./info/Infokaishalogin";
 import JhHome from "./info/main/JhHome"
  {/* info import */}
